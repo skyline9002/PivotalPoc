@@ -2,7 +2,7 @@ resources:
 - name: code-source
   type: git
   source:
-     uri: https://github.com/
+     uri: https://github.com/skyline9002/PivotalPoc
      branch: master
 - name: pcf
   type: cf
@@ -11,7 +11,7 @@ resources:
      skip_cert_check: false
      username: XXXX
      password: XXXX
-     organization: seroter-dev
+     organization: pivotal-simon-huang
      space: developement
 
 jobs:
@@ -37,3 +37,12 @@ jobs:
                  cd ./code-source/Concourse.Test
                  dotnet restore
                  dotnet test
+
+-  name: deploy-to-prod
+   plan:
+     - get: code-source
+       trigger: true
+       passed: [aspnetcore-unit-tests]
+     - put: pcf
+       params:
+         manifest: code-source/manifest.yml
