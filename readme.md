@@ -36,7 +36,7 @@ However, there has some scenarios I will not consider pivotal.
 
 Here I took Azure as example to demonstrate why I will not use Pivotal if the above condition met.
 
-![pcf-data-management-service](./Images/PCF-DataManagement.png)
+![pcf-data-management-service](./Images/pcf-data-management-service.png)
 
 We can see Pivotal providing many different types of database here, like SQL, Redis, NoSql, etc. 
 However I can tell you all these services will also be provided by Azure or AWS. Furthermore, they will provide something which pivotal will not or not yet provide, like Hadoop, Data warehouse.
