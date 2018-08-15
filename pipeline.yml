@@ -1,0 +1,39 @@
+resources:
+- name: code-source
+  type: git
+  source:
+     uri: https://github.com/
+     branch: master
+- name: pcf
+  type: cf
+  source:
+     api: https://api.run.pivotal.io
+     skip_cert_check: false
+     username: XXXX
+     password: XXXX
+     organization: seroter-dev
+     space: developement
+
+jobs:
+-  name: aspnetcore-unit-tests
+   plan:
+     - get: code-source
+       trigger: true
+     - task: run-tests
+       privileged: true
+       config:
+          platform: linux
+          inputs:
+          - name: code-source
+          image_resource:
+            type: docker-image
+            source:
+              repository: microsoft/aspnetcore-build
+          run:
+             path: sh
+             agrs:
+             - -exc
+             - |
+                 cd ./code-source/Concourse.Test
+                 dotnet restore
+                 dotnet test
