@@ -9,10 +9,10 @@ resources:
   source:
      api: https://api.run.pivotal.io
      skip_cert_check: false
-     username: XXXX
-     password: XXXX
+     username: xxxxxxx
+     password: xxxxxxx
      organization: pivotal-simon-huang
-     space: developement
+     space: development
 
 jobs:
 -  name: aspnetcore-unit-tests
@@ -31,12 +31,12 @@ jobs:
               repository: microsoft/aspnetcore-build
           run:
              path: sh
-             agrs:
+             args:
              - -exc
              - |
-                 cd ./code-source/Concourse.Test
-                 dotnet restore
-                 dotnet test
+               cd ./code-source/Concourse.Test
+               dotnet restore
+               dotnet test
 
 -  name: deploy-to-prod
    plan:
