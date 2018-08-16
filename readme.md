@@ -55,3 +55,131 @@ However, one post on StackOverFlow saved me the poster mentioned Pivotal Web Ser
 And I tried to register that and when I get into the portal I knew I make the right decision.It's a admin panel although it's simple but I can imaging even if I install the PCF into some hosting machine they will show up the similar stuff.
 
 Thus, if you only want to learn how to use the Pivotal PCF, here is a good start.
+
+#### 3. Concourse CI
+
+Concourse CI is a CI/CD solution which built by Pivotal. It's integrated with Pivotal well. However, concourse is also a stand-alone product which means you can also used it on other platforms. 
+You can think concourse is a Jenkins replacement or competitor. 
+
+##### Install Concourse
+
+Before install concourse please your machine/environment have install the following tools:
+
+1. [Docker](https://www.docker.com/products/docker-engine)
+2. [Docker Compose](https://docs.docker.com/compose/install/#install-compose)
+
+Download the [docker compose file](https://github.com/concourse/concourse-docker/blob/master/docker-compose-quickstart.yml) and navigate to the file location and run the following command:
+
+```
+docker-compose up -d
+```
+
+If you can see something below than your install success:
+
+![pivotal-install](./Images/pivotal-install.PNG)
+
+Or, you can go to `http://localhost:8080` to check your installation.
+
+![concourse-install](./Images/concourse-install.PNG)
+
+Besides install the concourse server on your machine you also need to install two cli tools, **fly** and **concourse** you can download it from [HERE](https://concourse-ci.org/download.html) 
+
+##### Learn Concourse
+
+To start with learning concourse I recommend you to read this [tutorial](https://concoursetutorial.com/) which also strongly recommend by Concourse offical. 
+Here I only list out some common usage:
+
+###### 1. Login to the server via fly
+
+```
+fly -t poc login -c http://localhost:8080
+```
+
+**poc** is a target variable which you can define, thus you can assign any string wihch fit into your scenario.
+
+The first time execute this command you also need to execute `fly -t poc sync` to ensure your fly cli have same version with concourse
+
+###### 2. Execute Job via fly
+
+```
+fly -t poc e -c task_hello_world.yml
+```
+
+To execute this command you need to have a job configuration file, the most simple one is something like:
+
+```
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: busybox}
+
+run:
+  path: echo
+  args: [hello world]
+```
+This configuration code describe create a container with `busybox` image and run command `echo hello world`
+
+###### 3. Set Pipeline via fly
+
+```
+fly -t poc set-pipeline -c pipeline.yml -p test-pipeline
+```
+
+**test-pipeline** is the name of your pipeline, thus you can define with your scenario. This command means set pipeline from pipeline.yml name it test-pipeline in poc target environment.
+
+Here is my pipeline yml file:
+
+```
+resources:
+- name: code-source
+  type: git
+  source:
+     uri: https://github.com/skyline9002/PivotalPoc
+     branch: master
+- name: pcf
+  type: cf
+  source:
+     api: https://api.run.pivotal.io
+     skip_cert_check: false
+     username: xxxxxxx
+     password: xxxxxxx
+     organization: pivotal-simon-huang
+     space: development
+
+jobs:
+-  name: aspnetcore-unit-tests
+   plan:
+     - get: code-source
+       trigger: true
+     - task: run-tests
+       privileged: true
+       config:
+          platform: linux
+          inputs:
+          - name: code-source
+          image_resource:
+            type: docker-image
+            source:
+              repository: microsoft/aspnetcore-build
+          run:
+             path: sh
+             args:
+             - -exc
+             - |
+               cd ./code-source/Concourse.Test
+               dotnet restore
+               dotnet test
+
+-  name: deploy-to-prod
+   plan:
+     - get: code-source
+       trigger: true
+       passed: [aspnetcore-unit-tests]
+     - put: pcf
+       params:
+         manifest: code-source/manifest.yml
+```
+
+This pipeline do the two thing, first doing the unit test in **Concourse.Test** project, then depoly **Concourse.Api** project to pivotal
