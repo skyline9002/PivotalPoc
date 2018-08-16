@@ -1,6 +1,6 @@
 ---
 applications:
-- name: xunit-tested-dotnetcore
+- name: dotnet-poc-simonhuang
   memory: 256M
   instances: 1
   buildpack: dotnet_core_buildpack
