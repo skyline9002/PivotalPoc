@@ -5,3 +5,4 @@ applications:
   instances: 1
   buildpack: dotnet_core_buildpack
   path: /tmp/build/put/code-source/Concourse.Api
+  stack: cflinuxfs3
