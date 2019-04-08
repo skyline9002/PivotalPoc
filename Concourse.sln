@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		manifest.yml = manifest.yml
 		pipeline.yml = pipeline.yml
 		readme.md = readme.md
+		task_hello_world.yml = task_hello_world.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{D110CA6A-D3A3-4EA9-BE54-A4F7F375FCDE}"
